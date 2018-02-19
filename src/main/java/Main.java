@@ -9,16 +9,17 @@ public class Main {
         String dbname = "hello_database"; // 自分のものに書き換える
         String username = "hello"; // 自分のものに書き換える
         String password = "abcdef"; // 自分のものに書き換える
-        Connection conn = null;
-        Statement stmt = null;
 
-        try {
+        try(
+                Connection conn = DriverManager.getConnection("jdbc:postgresql://" + hostname
+                + ":5432/" + dbname, username, password);
+                Statement stmt = conn.createStatement()
+                ) {
+
             Class.forName("org.postgresql.Driver");
-            conn = DriverManager.getConnection("jdbc:postgresql://" + hostname
-                    + ":5432/" + dbname, username, password);
+
             System.out.println("接続成功");
 
-            stmt = conn.createStatement();
             stmt.executeUpdate("CREATE TABLE products (pid INTEGER, name VARCHAR(20), price INTEGER, PRIMARY KEY (pid))");
             System.out.println("テーブル作成");
 
@@ -42,17 +43,6 @@ public class Main {
             System.out.println("テーブル削除");
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
     }
 }
